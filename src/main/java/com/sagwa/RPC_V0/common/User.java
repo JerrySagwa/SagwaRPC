@@ -1,4 +1,4 @@
-package com.sagwa.RPC_V1.common;
+package com.sagwa.RPC_V0.common;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
