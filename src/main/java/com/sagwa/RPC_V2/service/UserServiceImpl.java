@@ -1,6 +1,6 @@
-package com.sagwa.RPC_V1.service;
+package com.sagwa.RPC_V2.service;
 
-import com.sagwa.RPC_V1.common.User;
+import com.sagwa.RPC_V2.common.User;
 
 public class UserServiceImpl implements UserService {
 

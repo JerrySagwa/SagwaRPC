@@ -1,8 +1,8 @@
-package com.sagwa.RPC_V1.client;
+package com.sagwa.RPC_V2.client;
 
 
-import com.sagwa.RPC_V1.common.RPCRequest;
-import com.sagwa.RPC_V1.common.RPCResponse;
+import com.sagwa.RPC_V2.common.RPCRequest;
+import com.sagwa.RPC_V2.common.RPCResponse;
 import lombok.AllArgsConstructor;
 
 import java.lang.reflect.InvocationHandler;
@@ -25,7 +25,7 @@ public class ClientProxy implements InvocationHandler {
                 .params(args).paramTypes(method.getParameterTypes()).build();
         //数据传输
         RPCResponse response = IOClient.sendRequest(host, port, request);
-        //System.out.println(response);
+        System.out.println(response);
         return response.getData();
     }
     <T>T getProxy(Class<T> clazz){
