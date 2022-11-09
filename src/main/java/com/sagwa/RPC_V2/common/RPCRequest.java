@@ -1,7 +1,10 @@
 package com.sagwa.RPC_V2.common;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.checkerframework.checker.units.qual.A;
 
 import java.io.Serializable;
 
@@ -12,6 +15,8 @@ import java.io.Serializable;
  */
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class RPCRequest implements Serializable {
     // 服务类名，客户端只知道接口名，服务端通过接口名指向实现类
     private String interfaceName;

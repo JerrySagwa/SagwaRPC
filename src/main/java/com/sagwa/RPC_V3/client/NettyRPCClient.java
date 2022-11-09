@@ -1,8 +1,11 @@
 package com.sagwa.RPC_V3.client;
 
 
+import com.sagwa.RPC_V3.common.MyCodec;
 import com.sagwa.RPC_V3.common.RPCRequest;
 import com.sagwa.RPC_V3.common.RPCResponse;
+import com.sagwa.RPC_V3.common.serialize.impl.JsonSerializer;
+import com.sagwa.RPC_V3.common.serialize.impl.ObjectSerializer;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -39,21 +42,7 @@ public class NettyRPCClient implements RPCClient {
         eventLoopGroup = new NioEventLoopGroup();
         bootstrap.group(eventLoopGroup)
                 .channel(NioSocketChannel.class)
-                .handler(new ChannelInitializer<NioSocketChannel>() {
-                    @Override
-                    protected void initChannel(NioSocketChannel ch) throws Exception {
-                        ChannelPipeline pipeline = ch.pipeline();
-// 消息格式 [长度][消息体], 解决粘包问题
-                        pipeline.addLast(new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, 0, 4, 0, 4));
-                        // 计算当前待发送消息的长度，写入到前4个字节中
-                        pipeline.addLast(new LengthFieldPrepender(4));
-
-                        // 这里使用的还是java 序列化方式， netty的自带的解码编码支持传输这种结构
-                        pipeline.addLast(new ObjectEncoder());
-                        pipeline.addLast(new ObjectDecoder(className -> Class.forName(className)));
-                        pipeline.addLast(new NettyRPCClientHandler());
-                    }
-                });
+                .handler(new NettyClientInitializer());
     }
 
     @Override
@@ -65,6 +54,7 @@ public class NettyRPCClient implements RPCClient {
             channel.closeFuture().sync();
             AttributeKey<RPCResponse> key = AttributeKey.valueOf("response");
             RPCResponse response = channel.attr(key).get();
+            System.out.println(response);
             return response;
         } catch (InterruptedException e) {
             e.printStackTrace();

@@ -1,5 +1,8 @@
 package com.sagwa.RPC_V3.server;
 
+import com.sagwa.RPC_V3.common.MyCodec;
+import com.sagwa.RPC_V3.common.serialize.impl.JsonSerializer;
+import com.sagwa.RPC_V3.common.serialize.impl.ObjectSerializer;
 import com.sagwa.RPC_V3.server.handler.NettyRPCServerHandler;
 import com.sagwa.RPC_V3.service.ServiceProvider;
 import io.netty.bootstrap.ServerBootstrap;
@@ -39,14 +42,14 @@ public class NettyRPCServer implements RPCServer{
                         protected void initChannel(NioSocketChannel ch) throws Exception {
                             ChannelPipeline pipeline = ch.pipeline();
                             // 消息格式 [长度][消息体], 解决粘包问题
-                            pipeline.addLast(new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, 0, 4, 0, 4));
+//                            pipeline.addLast(new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, 4, 4, 0, 0));
                             // 计算当前待发送消息的长度，写入到前4个字节中
-                            pipeline.addLast(new LengthFieldPrepender(4));
+//                            pipeline.addLast(new LengthFieldPrepender(4));
 
                             // 这里使用的还是java 序列化方式， netty的自带的解码编码支持传输这种结构
-                            pipeline.addLast(new ObjectEncoder());
-                            pipeline.addLast(new ObjectDecoder(className -> Class.forName(className)));
-
+//                            pipeline.addLast(new ObjectEncoder());
+//                            pipeline.addLast(new ObjectDecoder(className -> Class.forName(className)));
+                            pipeline.addLast(new MyCodec(new JsonSerializer()));
                             pipeline.addLast(new NettyRPCServerHandler(serviceProvider));
                         }
                     })
