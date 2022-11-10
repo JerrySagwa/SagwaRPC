@@ -1,5 +1,8 @@
 package com.sagwa.RPC_V3.service;
 
+import com.sagwa.RPC_V3.service.impl.ZkServiceRegister;
+
+import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,17 +17,23 @@ public class ServiceProvider {
      * 一个实现类可能实现多个接口
      */
     private Map<String, Object> interfaceProvider;
+    private ServiceRegister serviceRegister;
+    private String host;
+    private int port;
 
-    public ServiceProvider(){
+    public ServiceProvider(String host, int port){
         this.interfaceProvider = new HashMap<>();
+        this.host = host;
+        this.port = port;
+        this.serviceRegister = new ZkServiceRegister();
     }
 
     public void provideServiceInterface(Object service){
-        String serviceName = service.getClass().getName();
         Class<?>[] interfaces = service.getClass().getInterfaces();
 
         for(Class clazz : interfaces){
             interfaceProvider.put(clazz.getName(),service);
+            serviceRegister.register(clazz.getName(), new InetSocketAddress(host, port));
         }
 
     }

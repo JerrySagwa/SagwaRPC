@@ -57,6 +57,7 @@ public class JsonSerializer implements Serializer{
             case RESPONSE:
                 RPCResponse response = JSON.parseObject(bytes, RPCResponse.class);
                 Class<?> dataType = response.getDataType();
+                System.out.println("JSONSerializerDataType : " + dataType);
                 if(! dataType.isAssignableFrom(response.getData().getClass())){
                     response.setData(JSONObject.toJavaObject((JSONObject) response.getData(),dataType));
                 }

@@ -19,12 +19,11 @@ public class TestServer {
 //        Map<String, Object> serviceProvide = new HashMap<>();
 //        serviceProvide.put("com.ganghuan.myRPCVersion2.service.UserService",userService);
 //        serviceProvide.put("com.ganghuan.myRPCVersion2.service.BlogService",blogService);
-        ServiceProvider serviceProvider = new ServiceProvider();
+        ServiceProvider serviceProvider = new ServiceProvider("127.0.0.1", 8080);
         serviceProvider.provideServiceInterface(userService);
         serviceProvider.provideServiceInterface(blogService);
 
         RPCServer RPCServer = new NettyRPCServer(serviceProvider);
         RPCServer.start(8080);
-
     }
 }

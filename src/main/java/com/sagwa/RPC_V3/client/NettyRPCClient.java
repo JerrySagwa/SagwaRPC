@@ -6,6 +6,8 @@ import com.sagwa.RPC_V3.common.RPCRequest;
 import com.sagwa.RPC_V3.common.RPCResponse;
 import com.sagwa.RPC_V3.common.serialize.impl.JsonSerializer;
 import com.sagwa.RPC_V3.common.serialize.impl.ObjectSerializer;
+import com.sagwa.RPC_V3.service.ServiceRegister;
+import com.sagwa.RPC_V3.service.impl.ZkServiceRegister;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -19,6 +21,8 @@ import io.netty.handler.codec.serialization.ObjectDecoder;
 import io.netty.handler.codec.serialization.ObjectEncoder;
 import io.netty.util.AttributeKey;
 
+import java.net.InetSocketAddress;
+
 /**
  * @Author Sagwa
  * @Date 2022/11/7 19:33
@@ -28,13 +32,13 @@ public class NettyRPCClient implements RPCClient {
 
     private final static Bootstrap bootstrap;
     private final static NioEventLoopGroup eventLoopGroup;
+    private ServiceRegister serviceRegister;
 
     private String host;
     private int port;
 
-    public NettyRPCClient(String host, int port) {
-        this.host = host;
-        this.port = port;
+    public NettyRPCClient() {
+        serviceRegister = new ZkServiceRegister();
     }
 
     static {
@@ -48,6 +52,11 @@ public class NettyRPCClient implements RPCClient {
     @Override
     public RPCResponse sendRequest(RPCRequest request) {
         try {
+            String interfaceName = request.getInterfaceName();
+            InetSocketAddress address = serviceRegister.serviceDiscovery(interfaceName);
+            host = address.getHostName();
+            port = address.getPort();
+            System.out.println(host + ":" + port);
             ChannelFuture channelFuture = bootstrap.connect(host, port).sync();
             Channel channel = channelFuture.channel();
             channel.writeAndFlush(request);
